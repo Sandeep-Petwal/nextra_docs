@@ -1,0 +1,1006 @@
+---
+sidebar_label: 'TypeScript in React'
+title: 'TypeScript in React - Complete Guide'
+description: 'Comprehensive guide to using TypeScript with React, including component types, hooks, props, state management, and best practices.'
+---
+
+# TypeScript in React - Complete Guide
+
+A comprehensive guide to using TypeScript with React, covering component types, hooks, props, state management, and best practices for type-safe React development.
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Component Types](#component-types)
+- [Props and State](#props-and-state)
+- [Event Handlers](#event-handlers)
+- [Hooks with TypeScript](#hooks-with-typescript)
+- [Context API with TypeScript](#context-api-with-typescript)
+- [Refs and DOM Elements](#refs-and-dom-elements)
+- [Children Props](#children-props)
+- [Generic Components](#generic-components)
+- [Form Handling](#form-handling)
+- [API Integration](#api-integration)
+- [Best Practices](#best-practices)
+
+## Getting Started
+
+### Setting up TypeScript with React
+
+```bash
+# Create a new React TypeScript project
+npx create-react-app my-app --template typescript
+
+# Or with Vite
+npm create vite@latest my-app -- --template react-ts
+
+# Add TypeScript to existing project
+npm install --save-dev typescript @types/react @types/react-dom
+```
+
+### Basic tsconfig.json Configuration
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ES6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}
+```
+
+## Component Types
+
+### Functional Components
+
+```typescript
+// Basic functional component
+const Greeting: React.FC = () => {
+  return <h1>Hello, World!</h1>;
+};
+
+// With props
+interface GreetingProps {
+  name: string;
+  age?: number;
+}
+
+const Greeting: React.FC<GreetingProps> = ({ name, age }) => {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      {age && <p>You are {age} years old</p>}
+    </div>
+  );
+};
+
+// Alternative syntax (preferred)
+const Greeting = ({ name, age }: GreetingProps) => {
+  return (
+    <div>
+      <h1>Hello, {name}!</h1>
+      {age && <p>You are {age} years old</p>}
+    </div>
+  );
+};
+```
+
+### Class Components
+
+```typescript
+interface CounterState {
+  count: number;
+}
+
+interface CounterProps {
+  initialValue?: number;
+}
+
+class Counter extends React.Component<CounterProps, CounterState> {
+  constructor(props: CounterProps) {
+    super(props);
+    this.state = {
+      count: props.initialValue || 0
+    };
+  }
+
+  increment = (): void => {
+    this.setState(prevState => ({
+      count: prevState.count + 1
+    }));
+  };
+
+  render(): JSX.Element {
+    return (
+      <div>
+        <p>Count: {this.state.count}</p>
+        <button onClick={this.increment}>Increment</button>
+      </div>
+    );
+  }
+}
+```
+
+## Props and State
+
+### Props Types
+
+```typescript
+// Basic props
+interface UserCardProps {
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    avatar?: string;
+  };
+  onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
+  className?: string;
+}
+
+const UserCard = ({ user, onEdit, onDelete, className }: UserCardProps) => {
+  return (
+    <div className={className}>
+      <img src={user.avatar || '/default-avatar.png'} alt={user.name} />
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+      {onEdit && <button onClick={() => onEdit(user.id)}>Edit</button>}
+      {onDelete && <button onClick={() => onDelete(user.id)}>Delete</button>}
+    </div>
+  );
+};
+```
+
+### State Types
+
+```typescript
+// Using useState with TypeScript
+const UserProfile = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Type inference works for simple types
+  const [count, setCount] = useState(0); // TypeScript infers number
+
+  // For complex objects, explicit typing is recommended
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    age: 0
+  });
+
+  return (
+    <div>
+      {loading && <p>Loading...</p>}
+      {error && <p>Error: {error}</p>}
+      {user && <UserCard user={user} />}
+    </div>
+  );
+};
+```
+
+## Event Handlers
+
+### Form Events
+
+```typescript
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    console.log('Form submitted:', formData);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleInputChange}
+      />
+      <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleInputChange}
+      />
+      <textarea
+        name="message"
+        value={formData.message}
+        onChange={handleInputChange}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+```
+
+### Click Events
+
+```typescript
+const Button = ({ onClick, children }: { 
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  children: React.ReactNode;
+}) => {
+  return (
+    <button onClick={onClick}>
+      {children}
+    </button>
+  );
+};
+
+// Usage
+const App = () => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    console.log('Button clicked!', e.currentTarget.textContent);
+  };
+
+  return <Button onClick={handleClick}>Click me</Button>;
+};
+```
+
+## Hooks with TypeScript
+
+### Custom Hooks
+
+```typescript
+// Custom hook with TypeScript
+interface UseCounterReturn {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+}
+
+const useCounter = (initialValue: number = 0): UseCounterReturn => {
+  const [count, setCount] = useState<number>(initialValue);
+
+  const increment = useCallback((): void => {
+    setCount(prev => prev + 1);
+  }, []);
+
+  const decrement = useCallback((): void => {
+    setCount(prev => prev - 1);
+  }, []);
+
+  const reset = useCallback((): void => {
+    setCount(initialValue);
+  }, [initialValue]);
+
+  return { count, increment, decrement, reset };
+};
+
+// Usage
+const Counter = () => {
+  const { count, increment, decrement, reset } = useCounter(10);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+</button>
+      <button onClick={decrement}>-</button>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
+};
+```
+
+### useEffect with TypeScript
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const UserProfile = ({ userId }: { userId: number }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchUser = async (): Promise<void> => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/users/${userId}`);
+        const userData: User = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <div>User not found</div>;
+
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <p>{user.email}</p>
+    </div>
+  );
+};
+```
+
+## Context API with TypeScript
+
+```typescript
+// Define the context type
+interface ThemeContextType {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+// Create context with default value
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+// Provider component
+interface ThemeProviderProps {
+  children: React.ReactNode;
+}
+
+const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
+  const toggleTheme = useCallback((): void => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  }, []);
+
+  const value: ThemeContextType = {
+    theme,
+    toggleTheme
+  };
+
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
+// Custom hook for using the context
+const useTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+
+// Usage
+const App = () => {
+  return (
+    <ThemeProvider>
+      <Header />
+      <Main />
+    </ThemeProvider>
+  );
+};
+
+const Header = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <header className={theme}>
+      <h1>My App</h1>
+      <button onClick={toggleTheme}>
+        Switch to {theme === 'light' ? 'dark' : 'light'} mode
+      </button>
+    </header>
+  );
+};
+```
+
+## Refs and DOM Elements
+
+```typescript
+// Ref for DOM elements
+const InputWithFocus = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = (): void => {
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div>
+      <input ref={inputRef} type="text" placeholder="Type something..." />
+      <button onClick={focusInput}>Focus Input</button>
+    </div>
+  );
+};
+
+// Ref for component instances (class components only)
+class ChildComponent extends React.Component {
+  doSomething = (): void => {
+    console.log('Child method called');
+  };
+
+  render(): JSX.Element {
+    return <div>Child Component</div>;
+  }
+}
+
+const ParentComponent = () => {
+  const childRef = useRef<ChildComponent>(null);
+
+  const callChildMethod = (): void => {
+    childRef.current?.doSomething();
+  };
+
+  return (
+    <div>
+      <ChildComponent ref={childRef} />
+      <button onClick={callChildMethod}>Call Child Method</button>
+    </div>
+  );
+};
+```
+
+## Children Props
+
+```typescript
+// Component with children
+interface LayoutProps {
+  children: React.ReactNode;
+  title?: string;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children, title }) => {
+  return (
+    <div className="layout">
+      {title && <h1>{title}</h1>}
+      <main>{children}</main>
+    </div>
+  );
+};
+
+// Component with render props
+interface RenderPropsComponentProps {
+  render: (data: { count: number; increment: () => void }) => React.ReactNode;
+}
+
+const RenderPropsComponent: React.FC<RenderPropsComponentProps> = ({ render }) => {
+  const [count, setCount] = useState(0);
+
+  const increment = (): void => {
+    setCount(prev => prev + 1);
+  };
+
+  return <>{render({ count, increment })}</>;
+};
+
+// Usage
+const App = () => {
+  return (
+    <Layout title="My App">
+      <RenderPropsComponent
+        render={({ count, increment }) => (
+          <div>
+            <p>Count: {count}</p>
+            <button onClick={increment}>Increment</button>
+          </div>
+        )}
+      />
+    </Layout>
+  );
+};
+```
+
+## Generic Components
+
+```typescript
+// Generic list component
+interface ListProps<T> {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
+  keyExtractor: (item: T, index: number) => string | number;
+}
+
+const List = <T,>({ items, renderItem, keyExtractor }: ListProps<T>) => {
+  return (
+    <ul>
+      {items.map((item, index) => (
+        <li key={keyExtractor(item, index)}>
+          {renderItem(item, index)}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+// Usage
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const UserList = () => {
+  const users: User[] = [
+    { id: 1, name: 'John', email: 'john@example.com' },
+    { id: 2, name: 'Jane', email: 'jane@example.com' }
+  ];
+
+  return (
+    <List
+      items={users}
+      keyExtractor={(user) => user.id}
+      renderItem={(user) => (
+        <div>
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+        </div>
+      )}
+    />
+  );
+};
+```
+
+## Form Handling
+
+```typescript
+// Form with validation
+interface FormData {
+  name: string;
+  email: string;
+  age: number;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  age?: string;
+}
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    age: 0
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (formData.age < 0 || formData.age > 120) {
+      newErrors.age = 'Age must be between 0 and 120';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    
+    if (validateForm()) {
+      console.log('Form is valid:', formData);
+      // Submit form data
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value, type } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'number' ? parseInt(value) || 0 : value
+    }));
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+        />
+        {errors.name && <span className="error">{errors.name}</span>}
+      </div>
+
+      <div>
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+        />
+        {errors.email && <span className="error">{errors.email}</span>}
+      </div>
+
+      <div>
+        <label htmlFor="age">Age:</label>
+        <input
+          type="number"
+          id="age"
+          name="age"
+          value={formData.age}
+          onChange={handleInputChange}
+        />
+        {errors.age && <span className="error">{errors.age}</span>}
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  );
+};
+```
+
+## API Integration
+
+```typescript
+// API service with TypeScript
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+  message: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+class ApiService {
+  private baseUrl: string;
+
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
+  }
+
+  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return {
+      data,
+      status: response.status,
+      message: 'Success'
+    };
+  }
+
+  async post<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+      data,
+      status: response.status,
+      message: 'Success'
+    };
+  }
+}
+
+// Custom hook for API calls
+const useApi = <T>(endpoint: string) => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const apiService = new ApiService('https://api.example.com');
+
+  const fetchData = useCallback(async (): Promise<void> => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await apiService.get<T>(endpoint);
+      setData(response.data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  }, [endpoint]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+};
+
+// Usage
+const UserList = () => {
+  const { data: users, loading, error, refetch } = useApi<User[]>('/users');
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!users) return <div>No users found</div>;
+
+  return (
+    <div>
+      <h2>Users</h2>
+      <button onClick={refetch}>Refresh</button>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
+
+## Best Practices
+
+### 1. Use Strict Mode
+
+```typescript
+// Always enable strict mode in tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true
+  }
+}
+```
+
+### 2. Prefer Interfaces for Props
+
+```typescript
+// Good
+interface ButtonProps {
+  onClick: () => void;
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+}
+
+// Avoid
+type ButtonProps = {
+  onClick: () => void;
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+};
+```
+
+### 3. Use Discriminated Unions
+
+```typescript
+interface LoadingState {
+  status: 'loading';
+}
+
+interface SuccessState {
+  status: 'success';
+  data: User[];
+}
+
+interface ErrorState {
+  status: 'error';
+  error: string;
+}
+
+type ApiState = LoadingState | SuccessState | ErrorState;
+
+const UserList = () => {
+  const [state, setState] = useState<ApiState>({ status: 'loading' });
+
+  switch (state.status) {
+    case 'loading':
+      return <div>Loading...</div>;
+    case 'success':
+      return (
+        <ul>
+          {state.data.map(user => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      );
+    case 'error':
+      return <div>Error: {state.error}</div>;
+  }
+};
+```
+
+### 4. Use Const Assertions
+
+```typescript
+// Good - const assertion
+const THEMES = ['light', 'dark'] as const;
+type Theme = typeof THEMES[number];
+
+// Avoid
+const THEMES = ['light', 'dark'];
+type Theme = string;
+```
+
+### 5. Proper Error Handling
+
+```typescript
+const ErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return <div>Something went wrong. Please try again.</div>;
+  }
+
+  return (
+    <ErrorBoundaryComponent onError={() => setHasError(true)}>
+      {children}
+    </ErrorBoundaryComponent>
+  );
+};
+```
+
+### 6. Use React.memo for Performance
+
+```typescript
+interface ExpensiveComponentProps {
+  data: ComplexData[];
+  onItemClick: (id: number) => void;
+}
+
+const ExpensiveComponent = React.memo<ExpensiveComponentProps>(
+  ({ data, onItemClick }) => {
+    return (
+      <div>
+        {data.map(item => (
+          <div key={item.id} onClick={() => onItemClick(item.id)}>
+            {item.name}
+          </div>
+        ))}
+      </div>
+    );
+  }
+);
+```
+
+### 7. Proper Type Guards
+
+```typescript
+// Type guard function
+const isUser = (obj: any): obj is User => {
+  return obj && typeof obj.id === 'number' && typeof obj.name === 'string';
+};
+
+// Usage
+const processData = (data: unknown) => {
+  if (isUser(data)) {
+    // TypeScript knows data is User here
+    console.log(data.name);
+  }
+};
+```
+
+## Common Patterns
+
+### 1. Higher-Order Components (HOCs)
+
+```typescript
+interface WithLoadingProps {
+  loading: boolean;
+}
+
+const withLoading = <P extends object>(
+  Component: React.ComponentType<P>
+) => {
+  return (props: P & WithLoadingProps) => {
+    if (props.loading) {
+      return <div>Loading...</div>;
+    }
+    return <Component {...(props as P)} />;
+  };
+};
+
+// Usage
+const UserProfile = ({ user }: { user: User }) => (
+  <div>{user.name}</div>
+);
+
+const UserProfileWithLoading = withLoading(UserProfile);
+```
+
+### 2. Render Props Pattern
+
+```typescript
+interface DataFetcherProps<T> {
+  url: string;
+  children: (data: T | null, loading: boolean, error: string | null) => React.ReactNode;
+}
+
+const DataFetcher = <T,>({ url, children }: DataFetcherProps<T>) => {
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then(res => res.json())
+      .then(setData)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [url]);
+
+  return <>{children(data, loading, error)}</>;
+};
+
+// Usage
+const App = () => (
+  <DataFetcher<User[]> url="/api/users">
+    {(users, loading, error) => {
+      if (loading) return <div>Loading...</div>;
+      if (error) return <div>Error: {error}</div>;
+      if (!users) return <div>No users</div>;
+      
+      return (
+        <ul>
+          {users.map(user => (
+            <li key={user.id}>{user.name}</li>
+          ))}
+        </ul>
+      );
+    }}
+  </DataFetcher>
+);
+```
+
+This comprehensive guide covers all the essential TypeScript patterns and best practices for React development. For more general TypeScript concepts, see the [TypeScript Fundamentals](../Frontend/typescript.md) guide.

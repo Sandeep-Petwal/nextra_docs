@@ -1,67 +1,121 @@
-import {Footer, Layout, Navbar} from 'nextra-theme-docs'
-import {Head} from 'nextra/components'
-import {getPageMap} from 'nextra/page-map'
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
+import Link from 'next/link'
+import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import { Head } from 'nextra/components'
+import { getPageMap } from 'nextra/page-map'
 import './globals.css'
-import {Metadata} from "next";
-import {NextraSearchDialog} from "@/components/nextra-search-dialog";
-import {getPagesFromPageMap} from "@/lib/getPagesFromPageMap";
+import { NextraSearchDialog } from '@/components/nextra-search-dialog'
+import { SiteFooter } from '@/components/site-footer'
+import { getPagesFromPageMap } from '@/lib/getPagesFromPageMap'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { getSearchDocuments } from '@/lib/getSearchDocuments'
 
 export const metadata: Metadata = {
-    // Define your metadata here
-    // For more information on metadata API, see: https://nextjs.org/docs/app/building-your-application/optimizing/metadata
+  metadataBase: new URL('https://learn.sandeep.cv'),
+  title: {
+    default: 'Learn with Sandeep',
+    template: '%s | Learn with Sandeep'
+  },
+  description: 'A living collection of everything I learn and document in tech.',
+  keywords: [
+    'Sandeep Prasad',
+    'learn',
+    'notes',
+    'web development',
+    'MERN stack',
+    'Git',
+    'Docker',
+    'Nextra',
+    'documentation',
+    'developer learning',
+    'second brain'
+  ],
+  authors: [{ name: 'Sandeep Prasad', url: 'https://sandeep.cv/' }],
+  creator: 'Sandeep Prasad',
+  publisher: 'Sandeep Prasad',
+  robots: {
+    index: true,
+    follow: true
+  },
+  icons: {
+    icon: '/img/favicon.ico',
+    shortcut: '/img/favicon.ico'
+  },
+  openGraph: {
+    title: 'Learn with Sandeep',
+    description: 'A living collection of everything I learn and document in tech.',
+    url: 'https://learn.sandeep.cv',
+    siteName: 'Learn with Sandeep',
+    images: ['/img/docusaurus-social-card.jpg'],
+    locale: 'en_US',
+    type: 'website'
+  }
 }
 
-// const banner = <Banner storageKey="some-key">This template was created with 🩸 and 💦 by <Link href="https://github.com/phucbm">PHUCBM</Link> 🐧</Banner>
 const navbar = (
-    <Navbar
-        projectLink="https://github.com/Sandeep-Petwal/nextra_docs"
-        logo={<img src="/images/general/logo.svg" alt="Logo" width={100} height={20}/>}
-        // ... Your additional navbar options
-    />
+  <Navbar
+    projectLink="https://github.com/Sandeep-Petwal/readmes"
+    logoLink="/"
+    logo={
+      <span className="site-navbar__brand">
+        <img src="/img/logo.png" alt="Learn with Sandeep" width={34} height={34} />
+        <span>Learn with Sandeep</span>
+      </span>
+    }
+  >
+    <Link href="/docs/intro" className="site-navbar__link">
+      My notes
+    </Link>
+    <Link href="/blog" className="site-navbar__link">
+      Blog
+    </Link>
+    <a href="https://sandeep.cv/" className="site-navbar__link" target="_blank" rel="noreferrer">
+      Website
+    </a>
+    <ThemeToggle />
+  </Navbar>
 )
-const footer = <Footer>MIT {new Date().getFullYear()} © Nextra.</Footer>
 
-export default async function RootLayout({children}) {
-    const pageMap = await getPageMap();
-    const pages = await getPagesFromPageMap({
-        pageMapArray: pageMap,
-        // modify page data if needed
-        // filterItem: async (item) => {
-        //     return {
-        //         ...item,
-        //     };
-        // }
-    });
+const footer = (
+  <Footer>
+    <SiteFooter />
+  </Footer>
+)
 
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const pageMap = await getPageMap()
+  const pages = await getPagesFromPageMap({
+    pageMapArray: pageMap
+  })
+  const searchDocuments = await getSearchDocuments()
 
-    return (
-        <html
-            // Not required, but good for SEO
-            lang="en"
-            // Required to be set
-            dir="ltr"
-            // Suggested by `next-themes` package https://github.com/pacocoursey/next-themes#with-app
-            suppressHydrationWarning
-        >
-        <Head
-            // ... Your additional head options
-        >
-            <link rel="shortcut icon" href="/images/general/icon.svg"/>
-            {/* Your additional tags should be passed as `children` of `<Head>` element */}
-        </Head>
-        <body>
+  return (
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <Head>
+        <link rel="shortcut icon" href="/img/favicon.ico" />
+      </Head>
+      <body>
         <Layout
-            // banner={banner}
-            navbar={navbar}
-            pageMap={pageMap}
-            docsRepositoryBase="https://github.com/Sandeep-Petwal/nextra_docs/tree/main"
-            footer={footer}
-            search={<NextraSearchDialog pages={pages}/>}
-            // ... Your additional layout options
+          navbar={navbar}
+          pageMap={pageMap}
+          docsRepositoryBase="https://github.com/Sandeep-Petwal/readmes/tree/main"
+          footer={footer}
+          search={
+            <NextraSearchDialog
+              pages={pages}
+              searchDocuments={searchDocuments}
+              placeholder="Search notes and blog..."
+            />
+          }
+          editLink={null}
+          feedback={{ content: null }}
+          sidebar={{ defaultMenuCollapseLevel: 1 }}
+          toc={{ backToTop: true }}
         >
-            {children}
+          {children}
         </Layout>
-        </body>
-        </html>
-    )
+      </body>
+    </html>
+  )
 }

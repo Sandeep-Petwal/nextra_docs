@@ -1,0 +1,170 @@
+---
+sidebar_label: 'Database Fundamentals'
+title: 'Database Fundamentals - Master Guide'
+description: 'A complete guide to data, information, databases, DBMS, relational vs non-relational databases, and core concepts for mastering databases.'
+---
+
+# Database Fundamentals - Master Guide
+
+A comprehensive guide to understanding data, information, databases, DBMS, and the differences between relational and non-relational databases. This document is designed to give you a deep, foundational mastery of database concepts.
+
+## Table of Contents
+- [What is Data?](#what-is-data)
+- [What is Information?](#what-is-information)
+- [What is a Database?](#what-is-a-database)
+- [Database Management System (DBMS)](#database-management-system-dbms)
+- [Types of Databases](#types-of-databases)
+- [Relational Databases](#relational-databases)
+- [Non-Relational (NoSQL) Databases](#non-relational-nosql-databases)
+- [Relational vs Non-Relational Databases](#relational-vs-non-relational-databases)
+- [Database Design Principles](#database-design-principles)
+- [Normalization & Denormalization](#normalization--denormalization)
+- [Transactions & ACID Properties](#transactions--acid-properties)
+- [Indexes & Query Optimization](#indexes--query-optimization)
+- [Backup, Recovery & Security](#backup-recovery--security)
+- [References](#references)
+
+---
+
+## What is Data?
+
+- **Data** is raw, unprocessed facts, figures, or symbols. It can be numbers, text, images, audio, or video.
+- Data by itself has no meaning until it is processed or interpreted.
+
+**Examples:**
+- 42, "John", 3.14, "2024-05-01"
+
+## What is Information?
+
+- **Information** is processed, organized, or structured data that is meaningful and useful for decision-making.
+- Information = Data + Context + Meaning
+
+**Example:**
+- Data: 42, "John"
+- Information: "John is 42 years old."
+
+## What is a Database?
+
+- A **database** is an organized collection of related data, stored and accessed electronically.
+- Databases allow efficient storage, retrieval, and management of data.
+- Can be as simple as a text file or as complex as a distributed cloud system.
+
+**Key Features:**
+- Persistent storage
+- Structured organization
+- Efficient querying and updating
+
+## Database Management System (DBMS)
+
+- A **DBMS** is software that manages databases, providing tools for data definition, manipulation, security, and integrity.
+- Examples: MySQL, PostgreSQL, MongoDB, Oracle, SQL Server
+
+**Core Functions:**
+- Data storage, retrieval, and update
+- Transaction management
+- Concurrency control
+- Security and access control
+- Backup and recovery
+
+## Types of Databases
+
+1. **Relational Databases (RDBMS):** Data is stored in tables (relations) with rows and columns. Uses SQL for queries.
+2. **Non-Relational (NoSQL) Databases:** Flexible schema, designed for scalability and specific use cases (document, key-value, graph, columnar).
+3. **Other Types:** Hierarchical, Network, Object-Oriented, Time-Series, NewSQL, etc.
+
+## Relational Databases
+
+- Based on the relational model (E.F. Codd, 1970).
+- Data is organized into tables (relations).
+- Each table has rows (records) and columns (fields/attributes).
+- Tables can be related via keys (primary, foreign).
+- Uses SQL (Structured Query Language) for data manipulation.
+
+**Examples:** MySQL, PostgreSQL, Oracle, SQL Server, SQLite
+
+**Key Concepts:**
+- **Primary Key:** Unique identifier for a row.
+- **Foreign Key:** Reference to a primary key in another table.
+- **Schema:** Structure of tables, columns, and relationships.
+
+## Non-Relational (NoSQL) Databases
+
+- Designed for flexibility, scalability, and handling unstructured or semi-structured data.
+- No fixed schema; data can be nested or hierarchical.
+- Four main types:
+  1. **Document Stores:** JSON-like documents (MongoDB, CouchDB)
+  2. **Key-Value Stores:** Simple key-value pairs (Redis, DynamoDB)
+  3. **Column-Family Stores:** Columns grouped into families (Cassandra, HBase)
+  4. **Graph Databases:** Nodes and edges for relationships (Neo4j, ArangoDB)
+
+**Use Cases:**
+- Big data, real-time analytics, content management, IoT, social networks
+
+## Relational vs Non-Relational Databases
+
+| Feature                | Relational (RDBMS)         | Non-Relational (NoSQL)         |
+|------------------------|----------------------------|-------------------------------|
+| Schema                 | Fixed, predefined          | Dynamic, flexible              |
+| Data Structure         | Tables (rows/columns)      | Documents, key-value, graph    |
+| Query Language         | SQL                        | Varies (JSON, API, etc.)       |
+| Transactions           | Strong ACID support        | Varies (often BASE)            |
+| Scalability            | Vertical (scale-up)        | Horizontal (scale-out)         |
+| Relationships          | Strong, via foreign keys   | Weak or application-level      |
+| Examples               | MySQL, PostgreSQL, Oracle  | MongoDB, Redis, Cassandra      |
+
+## Database Design Principles
+
+- **Data Modeling:** Identify entities, attributes, and relationships.
+- **ER Diagrams:** Visualize tables and relationships.
+- **Normalization:** Organize data to reduce redundancy.
+- **Denormalization:** Optimize for read performance by introducing redundancy.
+- **Indexing:** Speed up queries on large datasets.
+- **Constraints:** Enforce data integrity (unique, not null, foreign key).
+
+## Normalization & Denormalization
+
+- **Normalization:**
+  - Process of organizing data to minimize redundancy.
+  - Normal forms (1NF, 2NF, 3NF, BCNF, etc.)
+  - Each table should have a primary key.
+- **Denormalization:**
+  - Introducing redundancy for performance (faster reads, fewer joins).
+  - Used in analytics, reporting, NoSQL systems.
+
+## Transactions & ACID Properties
+
+- **Transaction:** A sequence of operations performed as a single logical unit.
+- **ACID:**
+  - **Atomicity:** All or nothing
+  - **Consistency:** Valid state transitions
+  - **Isolation:** Concurrent transactions don't interfere
+  - **Durability:** Once committed, changes persist
+- **BASE (NoSQL):**
+  - **Basically Available, Soft state, Eventually consistent**
+
+## Indexes & Query Optimization
+
+- **Index:** Data structure to speed up data retrieval (B-tree, hash, etc.)
+- **Query Optimization:** DBMS chooses the most efficient way to execute a query (query planner, execution plan).
+- **Best Practices:**
+  - Index columns used in WHERE, JOIN, ORDER BY
+  - Avoid over-indexing (write penalty)
+  - Analyze slow queries
+
+## Backup, Recovery & Security
+
+- **Backup:** Regularly save database state (full, incremental, differential)
+- **Recovery:** Restore data after failure
+- **Security:**
+  - Authentication & authorization
+  - Encryption (at rest, in transit)
+  - Auditing & monitoring
+  - Principle of least privilege
+
+## References
+
+- [Database System Concepts - Silberschatz, Korth, Sudarshan](https://www.db-book.com/)
+- [Fundamentals of Database Systems - Elmasri & Navathe](https://www.pearson.com/en-us/subject-catalog/p/fundamentals-of-database-systems/P200000003281/9780133970777)
+- [MongoDB vs SQL Databases](https://www.mongodb.com/nosql-explained/nosql-vs-sql)
+- [ACID vs BASE](https://en.wikipedia.org/wiki/ACID)
+- [Normalization](https://en.wikipedia.org/wiki/Database_normalization) 

@@ -17,7 +17,7 @@ export default async function Page(props) {
     const { default: MDXContent, toc, metadata } = result
     return (
         <Wrapper toc={toc} metadata={metadata}>
-            <MDXContent {...props} params={params} />
+            <MDXContent params={params} />
         </Wrapper>
     )
 }

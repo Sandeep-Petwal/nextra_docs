@@ -8,15 +8,17 @@ import {Command as CommandPrimitive} from "cmdk";
 import {cn} from "@/lib/utils";
 import {useRouter} from "next/navigation";
 import {PageItem} from "@/lib/getPagesFromPageMap";
+import type { SearchDocument } from "@/lib/getSearchDocuments";
 import {Kbd} from "@/components/ui/kbd";
 
 type Props = {
     placeholder?: string;
     pages?: PageItem[];
+    searchDocuments?: SearchDocument[];
 };
 type OnSelect = (url: string) => void;
 
-export function NextraSearchDialog({placeholder = "Search...", pages = []}: Props) {
+export function NextraSearchDialog({placeholder = "Search...", pages = [], searchDocuments = []}: Props) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
@@ -79,7 +81,8 @@ export function NextraSearchDialog({placeholder = "Search...", pages = []}: Prop
                     await importPagefind();
                 } catch (err) {
                     if (!active) return;
-                    setError("Failed to load search index.");
+                    const fallbackResults = searchLocalDocuments(value, searchDocuments);
+                    setResults(fallbackResults);
                     setLoading(false);
                     return;
                 }
@@ -109,7 +112,9 @@ export function NextraSearchDialog({placeholder = "Search...", pages = []}: Prop
                 setError("");
             } catch (err) {
                 if (!active) return;
-                setError("Search failed.");
+                const fallbackResults = searchLocalDocuments(value, searchDocuments);
+                setResults(fallbackResults);
+                setError("");
                 setLoading(false);
             }
         };
@@ -118,7 +123,7 @@ export function NextraSearchDialog({placeholder = "Search...", pages = []}: Prop
         return () => {
             active = false;
         };
-    }, [query]);
+    }, [query, searchDocuments]);
 
     if (!canRender) return null;
 
@@ -159,6 +164,70 @@ export function NextraSearchDialog({placeholder = "Search...", pages = []}: Prop
             </CommandDialog>
         </>
     );
+}
+
+function searchLocalDocuments(query: string, documents: SearchDocument[]): PagefindResult[] {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+        return [];
+    }
+
+    const rankedDocuments = documents
+        .map(document => {
+            const title = document.title.toLowerCase();
+            const description = (document.description || '').toLowerCase();
+            const content = document.content.toLowerCase();
+
+            let score = 0;
+
+            if (title.includes(normalizedQuery)) score += 6;
+            if (description.includes(normalizedQuery)) score += 4;
+            if (content.includes(normalizedQuery)) score += 2;
+
+            if (!score) {
+                return null;
+            }
+
+            return { document, score };
+        })
+        .filter((entry): entry is { document: SearchDocument; score: number } => entry !== null)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 8);
+
+    return rankedDocuments.map(({ document }) => ({
+        excerpt: buildExcerpt(document, normalizedQuery),
+        meta: {
+            title: document.title
+        },
+        raw_url: document.url,
+        url: document.url,
+        sub_results: [
+            {
+                excerpt: buildExcerpt(document, normalizedQuery),
+                title: document.title,
+                url: document.url
+            }
+        ]
+    }));
+}
+
+function buildExcerpt(document: SearchDocument, query: string) {
+    const source = document.content || document.description || '';
+    if (!source) {
+        return document.description || '';
+    }
+
+    const lowerSource = source.toLowerCase();
+    const matchIndex = lowerSource.indexOf(query);
+
+    if (matchIndex === -1) {
+        return source.slice(0, 140);
+    }
+
+    const start = Math.max(0, matchIndex - 50);
+    const end = Math.min(source.length, matchIndex + query.length + 90);
+    return source.slice(start, end).trim();
 }
 
 function SearchWelcomePages(

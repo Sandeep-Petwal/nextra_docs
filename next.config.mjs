@@ -9,3 +9,4 @@ export default withNextra({
     // ... Other Next.js config options
     // output: 'export'
 });
+    
