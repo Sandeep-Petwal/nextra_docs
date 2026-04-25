@@ -7,10 +7,10 @@ export interface PageItem {
 }
 
 export async function getPagesFromPageMap({
-                                              pageMapArray,
-                                              parentTitle,
-                                              filterItem,
-                                          }: {
+    pageMapArray,
+    parentTitle,
+    filterItem,
+}: {
     pageMapArray: any[];
     parentTitle?: string;
     filterItem?: (item: PageItem) => PageItem | Promise<PageItem>;
@@ -26,7 +26,7 @@ export async function getPagesFromPageMap({
         // submenu items
         if (item.type === 'menu' && item.items) {
             // @ts-ignore
-            const submenuItems = Object.entries(item.items).map(([key, {title, href}]) => {
+            const submenuItems = Object.entries(item.items).map(([key, { title, href }]) => {
                 return {
                     title: title,
                     url: href,

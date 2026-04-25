@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // const banner = <Banner storageKey="some-key">This template was created with 🩸 and 💦 by <Link href="https://github.com/phucbm">PHUCBM</Link> 🐧</Banner>
 const navbar = (
     <Navbar
-        projectLink="https://github.com/phucbm/nextra-docs-starter"
+        projectLink="https://github.com/Sandeep-Petwal/nextra_docs"
         logo={<img src="/images/general/logo.svg" alt="Logo" width={100} height={20}/>}
         // ... Your additional navbar options
     />
@@ -54,7 +54,7 @@ export default async function RootLayout({children}) {
             // banner={banner}
             navbar={navbar}
             pageMap={pageMap}
-            docsRepositoryBase="https://github.com/phucbm/nextra-docs-starter/tree/main"
+            docsRepositoryBase="https://github.com/Sandeep-Petwal/nextra_docs/tree/main"
             footer={footer}
             search={<NextraSearchDialog pages={pages}/>}
             // ... Your additional layout options

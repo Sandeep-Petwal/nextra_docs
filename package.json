@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "module",
-    "url": "https://github.com/phucbm/nextra-docs-starter"
+    "url": "https://github.com/Sandeep-Petwal/nextra_docs"
   },
-  "author": "PHUCBM",
+  "author": "Sandeep Prasad",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/phucbm/nextra-docs-starter/issues"
+    "url": "https://github.com/Sandeep-Petwal/nextra_docs/issues"
   },
-  "homepage": "https://github.com/phucbm/nextra-docs-starter#readme",
+  "homepage": "https://github.com/Sandeep-Petwal/nextra_docs#readme",
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@tailwindcss/postcss": "^4.1.18",

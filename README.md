@@ -1,6 +1,7 @@
-# Nextra Docs Starter 
+# Nextra Docs 
 
-![Vercel Deploy](https://deploy-badge.vercel.app/vercel/nextra-docs-starter)
+![GitHub](https://img.shields.io/github/license/Sandeep-Petwal/nextra_docs)
+![GitHub Repo stars](https://img.shields.io/github/stars/Sandeep-Petwal/nextra_docs)
 
 This starter template includes the following features:
 
@@ -23,7 +24,7 @@ You can deploy this template on Vercel by clicking the button below
 
 Using the GitHub CLI:
 ```bash
-gh repo clone phucbm/nextra-docs-starter
+gh repo clone Sandeep-Petwal/nextra_docs
 ```
 
 ### Install
@@ -38,10 +39,10 @@ pnpm dev
 
 ## Star History
 
-<a href="https://www.star-history.com/#phucbm/nextra-docs-starter&type=timeline&logscale&legend=top-left">
+<a href="https://www.star-history.com/#Sandeep-Petwal/nextra_docs&type=timeline&logscale&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=phucbm/nextra-docs-starter&type=timeline&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=phucbm/nextra-docs-starter&type=timeline&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=phucbm/nextra-docs-starter&type=timeline&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Sandeep-Petwal/nextra_docs&type=timeline&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Sandeep-Petwal/nextra_docs&type=timeline&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Sandeep-Petwal/nextra_docs&type=timeline&logscale&legend=top-left" />
  </picture>
 </a>
